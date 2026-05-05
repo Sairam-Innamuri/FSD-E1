@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{_fragments :: head('Admin · Event form')}"></head>
+<body>
+<div class="page-bg" aria-hidden="true"></div>
+<header th:replace="~{_fragments :: navbar('faculty')}"></header>
+
+<main class="container section">
+  <div class="section-head">
+    <h2 th:text="${event.id} != null ? 'Edit event' : 'Create event'">Event</h2>
+    <a class="btn btn-ghost" th:href="@{/faculty/events}">Back</a>
+  </div>
+
+  <form class="panel form" method="post" th:object="${event}"
+        th:action="${event.id == null} ? @{/faculty/events/new} : @{/faculty/events/{id}/edit(id=${event.id})}">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+    <div>
+      <label for="title">Title</label>
+      <input id="title" th:field="*{title}"/>
+      <div class="field-error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+    </div>
+
+    <div>
+      <label for="description">Description</label>
+      <textarea id="description" th:field="*{description}"></textarea>
+      <div class="field-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+    </div>
+
+    <div class="form two">
+      <div>
+        <label for="startDateTime">Start</label>
+        <input id="startDateTime" type="datetime-local" th:field="*{startDateTime}"/>
+        <div class="field-error" th:if="${#fields.hasErrors('startDateTime')}" th:errors="*{startDateTime}"></div>
+      </div>
+      <div>
+        <label for="endDateTime">End (optional)</label>
+        <input id="endDateTime" type="datetime-local" th:field="*{endDateTime}"/>
+        <div class="field-error" th:if="${#fields.hasErrors('endDateTime')}" th:errors="*{endDateTime}"></div>
+      </div>
+    </div>
+
+    <div class="form two">
+      <div>
+        <label for="eventType">Event type</label>
+        <select id="eventType" th:field="*{eventType}">
+          <option th:each="t : ${types}" th:value="${t}" th:text="${t}"></option>
+        </select>
+      </div>
+      <div>
+        <label for="department">Department</label>
+        <input id="department" th:field="*{department}"/>
+        <div class="field-error" th:if="${#fields.hasErrors('department')}" th:errors="*{department}"></div>
+      </div>
+    </div>
+
+    <div class="form two">
+      <div>
+        <label for="venue">Venue</label>
+        <input id="venue" th:field="*{venue}"/>
+        <div class="field-error" th:if="${#fields.hasErrors('venue')}" th:errors="*{venue}"></div>
+      </div>
+      <div>
+        <label for="capacity">Capacity</label>
+        <input id="capacity" type="number" min="1" th:field="*{capacity}"/>
+        <div class="field-error" th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}"></div>
+      </div>
+    </div>
+
+    <div>
+      <label style="display:flex; gap:10px; align-items:center;">
+        <input type="checkbox" th:field="*{active}"/>
+        <span>Active (visible for registration when upcoming)</span>
+      </label>
+    </div>
+
+    <div class="row-actions">
+      <button class="btn btn-primary" type="submit">Save</button>
+    </div>
+  </form>
+</main>
+
+<div th:replace="~{_fragments :: fab}"></div>
+<footer th:replace="~{_fragments :: footer}"></footer>
+</body>
+</html>

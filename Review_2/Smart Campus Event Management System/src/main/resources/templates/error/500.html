@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{_fragments :: head('Server error')}"></head>
+<body>
+<div class="page-bg" aria-hidden="true"></div>
+<header th:replace="~{_fragments :: navbar('home')}"></header>
+<main class="container section">
+  <div class="panel">
+    <h2 style="font-family: Syne, system-ui; margin:0 0 8px;">500 — Server error</h2>
+    <p class="muted" th:text="${message} ?: 'Please try again later.'">msg</p>
+    <div class="row-actions" style="margin-top:14px;">
+      <a class="btn btn-primary" th:href="@{/}">Home</a>
+    </div>
+  </div>
+</main>
+<div th:replace="~{_fragments :: fab}"></div>
+<footer th:replace="~{_fragments :: footer}"></footer>
+</body>
+</html>

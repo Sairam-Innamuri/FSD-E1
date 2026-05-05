@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{_fragments :: head(${event.title})}"></head>
+<body>
+<div class="page-bg" aria-hidden="true"></div>
+<header th:replace="~{_fragments :: navbar('events')}"></header>
+
+<main class="container section">
+  <div class="section-head">
+    <h1 class="page-title" th:text="${event.title}">Event</h1>
+    <a class="btn btn-ghost" th:href="@{/events}">Back to list</a>
+  </div>
+
+  <div class="panel">
+    <div class="row-actions" style="margin:0; justify-content:space-between;">
+      <div class="meta">
+        <span class="tag accent" th:text="${event.eventType}">TYPE</span>
+        <span class="tag" th:text="${event.department}">Dept</span>
+        <span class="tag" th:text="${event.active} ? 'Active' : 'Inactive'">Active</span>
+      </div>
+      <div class="pill" th:text="${registeredCount} + ' registered · ' + ${spotsLeft} + ' spots left'">stats</div>
+    </div>
+
+    <p class="muted" style="margin-top:12px;" th:text="${#temporals.format(event.startDateTime, 'EEEE, dd MMMM yyyy · HH:mm')}">start</p>
+    <p class="muted" th:if="${event.endDateTime != null}"
+       th:text="'Ends: ' + ${#temporals.format(event.endDateTime, 'dd MMM yyyy · HH:mm')}">end</p>
+
+    <h3 style="font-family: Syne, system-ui; margin: 16px 0 8px;">Venue</h3>
+    <p class="muted" style="margin:0;" th:text="${event.venue}">venue</p>
+
+    <h3 style="font-family: Syne, system-ui; margin: 16px 0 8px;">About</h3>
+    <p class="muted" style="margin:0; white-space: pre-wrap;" th:text="${event.description}">desc</p>
+
+    <div class="row-actions" style="margin-top:16px;">
+      <a class="btn btn-primary"
+         th:if="${event.active} and ${event.startDateTime.isAfter(now)}"
+         th:href="@{/student/events/{id}/register(id=${event.id})}">Register</a>
+      <span class="muted" th:if="${!event.active} or ${!event.startDateTime.isAfter(now)}">
+        Registration is closed for this event.
+      </span>
+    </div>
+  </div>
+</main>
+
+<div th:replace="~{_fragments :: fab}"></div>
+<footer th:replace="~{_fragments :: footer}"></footer>
+</body>
+</html>

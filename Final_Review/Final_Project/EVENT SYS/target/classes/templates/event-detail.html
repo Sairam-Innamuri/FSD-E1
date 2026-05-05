@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${event.title} + ' - Campus Events'">Event Detail</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<nav class="navbar">
+    <a th:href="@{/}" class="navbar-brand">🎓 CampusEvents</a>
+    <ul class="nav-links">
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/events}">All Events</a></li>
+        <li><a th:href="@{/my-events}">My Events</a></li>
+        <li><a th:href="@{/admin/login}" class="btn-nav">Admin</a></li>
+    </ul>
+</nav>
+
+<div class="container" style="max-width:800px;margin-top:2rem;">
+    <a th:href="@{/}" class="btn btn-secondary btn-sm" style="margin-bottom:1.5rem;">&larr; Back to Events</a>
+
+    <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:20px;overflow:hidden;">
+        <!-- Event Header Banner -->
+        <div style="background:linear-gradient(135deg,#6c63ff22,#ff658422);padding:2.5rem 2rem;border-bottom:1px solid var(--border);">
+            <div class="event-type-badge"
+                 th:classappend="${event.type == 'Workshop'} ? 'badge-workshop' :
+                                 (${event.type == 'Seminar'} ? 'badge-seminar' :
+                                 (${event.type == 'Conference'} ? 'badge-conference' :
+                                 (${event.type == 'Cultural'} ? 'badge-cultural' : 'badge-default')))"
+                 th:text="${event.type}">Type</div>
+            <h1 style="font-size:1.8rem;font-weight:800;margin:0.5rem 0;" th:text="${event.title}">Title</h1>
+            <div class="event-meta" style="margin-top:1rem;">
+                <div class="event-meta-item">📅 <span th:text="${#temporals.format(event.date, 'EEEE, dd MMMM yyyy · hh:mm a')}">Date</span></div>
+                <div class="event-meta-item">📍 <span th:text="${event.venue}">Venue</span></div>
+                <div class="event-meta-item">🏛 <span th:text="${event.department}">Dept</span></div>
+                <div class="event-meta-item">👥 <span th:text="${event.registrationCount} + ' / ' + ${event.capacity} + ' registered'">Seats</span></div>
+            </div>
+        </div>
+
+        <div style="padding:2rem;">
+            <h3 style="font-weight:700;margin-bottom:0.75rem;">About This Event</h3>
+            <p style="color:var(--text-muted);line-height:1.8;" th:text="${event.description}">Description</p>
+
+            <!-- Status Badge -->
+            <div style="margin:1.5rem 0;">
+                <span th:if="${event.registrationOpen}" class="alert alert-success" style="display:inline-flex;">✅ Registration Open</span>
+                <span th:unless="${event.registrationOpen}" class="alert alert-danger" style="display:inline-flex;">❌ Registration Closed</span>
+            </div>
+
+            <!-- REGISTRATION FORM STEPS -->
+            <div id="reg-section" th:if="${event.registrationOpen}">
+                <div class="steps" id="steps-indicator">
+                    <div class="step active" id="step1-ind"><div class="step-num">1</div><span>Details</span></div>
+                    <div class="step-line"></div>
+                    <div class="step" id="step2-ind"><div class="step-num">2</div><span>Verify OTP</span></div>
+                    <div class="step-line"></div>
+                    <div class="step" id="step3-ind"><div class="step-num">3</div><span>Confirm</span></div>
+                </div>
+
+                <!-- Step 1: Student Details -->
+                <div id="step1">
+                    <div class="form-group">
+                        <label class="form-label">Full Name *</label>
+                        <input type="text" id="reg-name" class="form-control" placeholder="Enter your full name"/>
+                        <div class="form-error" id="err-name"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address *</label>
+                        <input type="email" id="reg-email" class="form-control" placeholder="your.email@college.edu"/>
+                        <div class="form-error" id="err-email"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Department *</label>
+                        <select id="reg-dept" class="form-control">
+                            <option value="">Select Department</option>
+                            <option>Computer Science</option>
+                            <option>Information Technology</option>
+                            <option>Electronics</option>
+                            <option>Mechanical Engineering</option>
+                            <option>Civil Engineering</option>
+                            <option>Management</option>
+                            <option>Other</option>
+                        </select>
+                        <div class="form-error" id="err-dept"></div>
+                    </div>
+                    <button class="btn btn-primary btn-full" id="send-otp-btn" onclick="sendOtp()">
+                        <span id="otp-btn-text">📧 Send OTP to Email</span>
+                        <div class="spinner" id="otp-spinner"></div>
+                    </button>
+                </div>
+
+                <!-- Step 2: OTP Verification -->
+                <div id="step2" style="display:none;">
+                    <div class="alert alert-info" id="otp-sent-msg">OTP sent! Check your email.</div>
+                    <div class="form-group">
+                        <label class="form-label">Enter 6-Digit OTP *</label>
+                        <input type="text" id="otp-code" class="form-control" maxlength="6" placeholder="______" style="letter-spacing:6px;font-size:1.3rem;text-align:center;font-weight:700;"/>
+                        <div class="otp-timer" id="otp-timer">⏰ OTP expires in <span id="countdown">05:00</span></div>
+                        <div class="form-error" id="err-otp"></div>
+                    </div>
+                    <div style="display:flex;gap:0.75rem;">
+                        <button class="btn btn-secondary" onclick="resendOtp()">🔄 Resend OTP</button>
+                        <button class="btn btn-primary" style="flex:1" id="verify-btn" onclick="verifyOtp()">
+                            <span id="verify-text">✅ Verify &amp; Register</span>
+                            <div class="spinner" id="verify-spinner"></div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Success -->
+                <div id="step3" style="display:none;text-align:center;padding:2rem 0;">
+                    <div style="font-size:4rem;margin-bottom:1rem;">🎉</div>
+                    <h3 style="font-size:1.4rem;font-weight:700;margin-bottom:0.5rem;">Registration Successful!</h3>
+                    <p style="color:var(--text-muted);">You are now registered for <strong th:text="${event.title}">event</strong>.</p>
+                    <a th:href="@{/my-events}" class="btn btn-primary" style="margin-top:1.5rem;">View My Events</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toast-container"></div>
+<footer class="footer"><p>© 2025 Smart Campus Event Management System</p></footer>
+<script th:inline="javascript">
+    const EVENT_ID = [[${event.id}]];
+</script>
+<script th:src="@{/js/register.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

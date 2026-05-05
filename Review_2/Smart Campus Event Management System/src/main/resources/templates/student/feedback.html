@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{_fragments :: head('Feedback')}"></head>
+<body>
+<div class="page-bg" aria-hidden="true"></div>
+<header th:replace="~{_fragments :: navbar('regs')}"></header>
+
+<main class="container section">
+  <div class="section-head">
+    <h1 class="page-title">Event feedback</h1>
+    <a class="btn btn-ghost" th:href="@{/student/registrations}">Back</a>
+  </div>
+
+  <div class="panel">
+    <div class="pill" th:text="${registration.event.eventType}">TYPE</div>
+    <h3 style="font-family: Syne, system-ui; margin:12px 0 6px;" th:text="${registration.event.title}">Title</h3>
+    <p class="muted" style="margin:0;">Help organizers improve the next edition.</p>
+  </div>
+
+  <form class="panel stack-form" style="margin-top:14px;" method="post"
+        th:action="@{/student/feedback/{id}(id=${registration.id})}" th:object="${feedbackForm}">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    <div>
+      <label for="rating">Rating (1–5)</label>
+      <select id="rating" th:field="*{rating}">
+        <option th:value="5">5 — Excellent</option>
+        <option th:value="4">4 — Great</option>
+        <option th:value="3">3 — Good</option>
+        <option th:value="2">2 — Okay</option>
+        <option th:value="1">1 — Needs work</option>
+      </select>
+      <div class="field-error" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></div>
+    </div>
+    <div>
+      <label for="comment">Comments (optional)</label>
+      <textarea id="comment" th:field="*{comment}" placeholder="What did you like? What should change?"></textarea>
+      <div class="field-error" th:if="${#fields.hasErrors('comment')}" th:errors="*{comment}"></div>
+    </div>
+    <div class="row-actions">
+      <button class="btn btn-primary" type="submit">Submit feedback</button>
+    </div>
+  </form>
+</main>
+
+<div th:replace="~{_fragments :: fab}"></div>
+<footer th:replace="~{_fragments :: footer}"></footer>
+</body>
+</html>

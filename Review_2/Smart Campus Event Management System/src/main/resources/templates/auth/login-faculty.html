@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{_fragments :: head('Faculty login · Veltech')}"></head>
+<body>
+<div class="page-bg" aria-hidden="true"></div>
+<header th:replace="~{_fragments :: navbar('login-fac')}"></header>
+
+<main class="container section narrow">
+  <div th:if="${error}" class="error banner" th:text="${error}"></div>
+
+  <div class="auth-card auth-card-muted">
+    <p class="eyebrow">Veltech University</p>
+    <h1 class="page-title">Faculty login</h1>
+    <p class="muted">Only authorised faculty IDs may access this portal.</p>
+    <p class="muted small" style="margin-top:10px;">
+      Demo password for seeded faculty accounts: <span class="mono">faculty123</span>
+    </p>
+
+    <form class="stack-form" method="post" th:action="@{/login/faculty}">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+      <div>
+        <label for="loginId">Faculty ID</label>
+        <input id="loginId" name="loginId" autocomplete="username" required placeholder="VTUF001"
+               maxlength="32"/>
+      </div>
+      <div>
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required/>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+    </form>
+
+    <p class="muted small" style="margin-top:18px;">
+      Allowed faculty login IDs: <span class="mono">VTUF001</span>, <span class="mono">VTUF002</span>, <span class="mono">VTUF003</span>, <span class="mono">VTUF004</span>.
+    </p>
+  </div>
+</main>
+
+<div th:replace="~{_fragments :: fab}"></div>
+<footer th:replace="~{_fragments :: footer}"></footer>
+</body>
+</html>

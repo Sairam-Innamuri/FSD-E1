@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Manage Events - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div class="admin-sidebar-brand">🎓 Admin Panel</div>
+        <a th:href="@{/admin/dashboard}" class="admin-nav-item">📊 Dashboard</a>
+        <a th:href="@{/admin/events}" class="admin-nav-item active">📋 Events</a>
+        <a th:href="@{/admin/events/new}" class="admin-nav-item">➕ Add Event</a>
+        <a th:href="@{/admin/stats}" class="admin-nav-item">📈 Statistics</a>
+        <a th:href="@{/h2-console}" class="admin-nav-item" target="_blank">🗄 H2 Console</a>
+        <div style="flex:1"></div>
+        <a th:href="@{/}" class="admin-nav-item">🏠 Public Site</a>
+        <form th:action="@{/admin/logout}" method="post">
+            <button type="submit" class="admin-nav-item" style="border:none;cursor:pointer;background:none;width:100%;text-align:left;color:var(--danger);">🚪 Logout</button>
+        </form>
+    </aside>
+
+    <main class="admin-content">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+            <h1 style="font-size:1.6rem;font-weight:800;">Manage Events</h1>
+            <a th:href="@{/admin/events/new}" class="btn btn-primary">➕ New Event</a>
+        </div>
+
+        <!-- Flash messages -->
+        <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+
+        <!-- Search Filters -->
+        <form th:action="@{/admin/events}" method="get" style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1.5rem;display:flex;gap:0.75rem;flex-wrap:wrap;align-items:flex-end;">
+            <div>
+                <label class="form-label" style="display:block;margin-bottom:.3rem;">Department</label>
+                <select name="department" class="form-control" style="min-width:160px;" th:value="${filterDepartment}">
+                    <option value="">All Depts</option>
+                    <option th:selected="${filterDepartment == 'Computer Science'}">Computer Science</option>
+                    <option th:selected="${filterDepartment == 'Information Technology'}">Information Technology</option>
+                    <option th:selected="${filterDepartment == 'Electronics'}">Electronics</option>
+                    <option th:selected="${filterDepartment == 'Civil Engineering'}">Civil Engineering</option>
+                    <option th:selected="${filterDepartment == 'Management'}">Management</option>
+                    <option th:selected="${filterDepartment == 'All Departments'}">All Departments</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label" style="display:block;margin-bottom:.3rem;">Type</label>
+                <select name="type" class="form-control" th:value="${filterType}">
+                    <option value="">All Types</option>
+                    <option th:selected="${filterType == 'Workshop'}">Workshop</option>
+                    <option th:selected="${filterType == 'Seminar'}">Seminar</option>
+                    <option th:selected="${filterType == 'Conference'}">Conference</option>
+                    <option th:selected="${filterType == 'Cultural'}">Cultural</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label" style="display:block;margin-bottom:.3rem;">Status</label>
+                <select name="status" class="form-control" th:value="${filterStatus}">
+                    <option value="">All Status</option>
+                    <option th:selected="${filterStatus == 'UPCOMING'}">UPCOMING</option>
+                    <option th:selected="${filterStatus == 'COMPLETED'}">COMPLETED</option>
+                    <option th:selected="${filterStatus == 'CANCELLED'}">CANCELLED</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">🔍 Filter</button>
+            <a th:href="@{/admin/events}" class="btn btn-secondary">Reset</a>
+        </form>
+
+        <!-- Events Table -->
+        <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:16px;overflow:hidden;">
+            <div style="overflow-x:auto;">
+                <table class="admin-table">
+                    <thead><tr>
+                        <th>ID</th><th>Event</th><th>Type</th><th>Date</th>
+                        <th>Department</th><th>Registrations</th><th>Status</th><th>Actions</th>
+                    </tr></thead>
+                    <tbody>
+                    <tr th:each="event : ${events}">
+                        <td style="color:var(--text-muted);" th:text="'#' + ${event.id}">1</td>
+                        <td>
+                            <div style="font-weight:600;max-width:200px;" th:text="${event.title}">Title</div>
+                            <div style="font-size:.75rem;color:var(--text-muted);" th:text="${event.venue}">Venue</div>
+                        </td>
+                        <td><span class="event-type-badge"
+                                  th:classappend="${event.type == 'Workshop'} ? 'badge-workshop' :
+                                                  (${event.type == 'Seminar'} ? 'badge-seminar' :
+                                                  (${event.type == 'Conference'} ? 'badge-conference' :
+                                                  (${event.type == 'Cultural'} ? 'badge-cultural' : 'badge-default')))"
+                                  th:text="${event.type}">Type</span></td>
+                        <td style="font-size:.82rem;" th:text="${#temporals.format(event.date, 'dd MMM yyyy')}">Date</td>
+                        <td style="font-size:.82rem;" th:text="${event.department}">Dept</td>
+                        <td style="font-size:.82rem;" th:text="${event.registrationCount} + ' / ' + ${event.capacity}">0/100</td>
+                        <td>
+                            <span th:text="${event.status}"
+                                  th:classappend="${event.status == 'UPCOMING'} ? 'alert-info' : (${event.status == 'COMPLETED'} ? 'alert-success' : 'alert-danger')"
+                                  class="alert"
+                                  style="padding:.2rem .6rem;font-size:.72rem;display:inline-block;">UPCOMING</span>
+                        </td>
+                        <td>
+                            <div style="display:flex;gap:.4rem;flex-wrap:wrap;">
+                                <a th:href="@{/admin/events/{id}/edit(id=${event.id})}" class="btn btn-secondary btn-sm">✏️</a>
+                                <a th:href="@{/admin/events/{id}/registrations(id=${event.id})}" class="btn btn-secondary btn-sm">👥</a>
+                                <form th:action="@{/admin/events/{id}/delete(id=${event.id})}" method="post" onsubmit="return confirm('Delete this event?');" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm">🗑️</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="empty-state" th:if="${#lists.isEmpty(events)}" style="padding:3rem;">
+                    <div class="empty-icon">📋</div>
+                    <div class="empty-title">No events found</div>
+                    <a th:href="@{/admin/events/new}" class="btn btn-primary" style="margin-top:1rem;">Add Event</a>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

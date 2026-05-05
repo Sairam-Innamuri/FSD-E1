@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{_fragments :: head('Student login · Veltech')}"></head>
+<body>
+<div class="page-bg" aria-hidden="true"></div>
+<header th:replace="~{_fragments :: navbar('login-stu')}"></header>
+
+<main class="container section narrow">
+  <div th:if="${infoMessage}" class="flash" th:text="${infoMessage}"></div>
+  <div th:if="${error}" class="error banner" th:text="${error}"></div>
+
+  <div class="auth-card auth-card-muted">
+    <p class="eyebrow">Veltech University</p>
+    <h1 class="page-title">Student login</h1>
+    <p class="muted">Sign in with your official university ID (format <span class="mono">VTU</span> plus five digits).</p>
+    <p class="muted small" style="margin-top:10px;">
+      Demo account: <span class="mono">VTU10001</span> / <span class="mono">student123</span>
+    </p>
+
+    <form class="stack-form" method="post" th:action="@{/login/student}">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+      <div>
+        <label for="loginId">University ID</label>
+        <input id="loginId" name="loginId" autocomplete="username" required placeholder="VTU12345"
+               pattern="[Vv][Tt][Uu][0-9]{5}" maxlength="8" title="VTU and five digits"/>
+      </div>
+      <div>
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required/>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+    </form>
+
+    <p class="muted small" style="margin-top:18px;">New student? <a th:href="@{/register/student}">Create your account</a></p>
+  </div>
+</main>
+
+<div th:replace="~{_fragments :: fab}"></div>
+<footer th:replace="~{_fragments :: footer}"></footer>
+</body>
+</html>

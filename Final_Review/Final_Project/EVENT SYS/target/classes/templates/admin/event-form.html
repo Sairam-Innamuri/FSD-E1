@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${isEdit} ? 'Edit Event' : 'Add Event' + ' - Admin'">Event Form</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div class="admin-sidebar-brand">🎓 Admin Panel</div>
+        <a th:href="@{/admin/dashboard}" class="admin-nav-item">📊 Dashboard</a>
+        <a th:href="@{/admin/events}" class="admin-nav-item">📋 Events</a>
+        <a th:href="@{/admin/events/new}" class="admin-nav-item" th:classappend="${!isEdit} ? 'active'">➕ Add Event</a>
+        <a th:href="@{/admin/stats}" class="admin-nav-item">📈 Statistics</a>
+        <div style="flex:1"></div>
+        <a th:href="@{/}" class="admin-nav-item">🏠 Public Site</a>
+        <form th:action="@{/admin/logout}" method="post">
+            <button type="submit" class="admin-nav-item" style="border:none;cursor:pointer;background:none;width:100%;text-align:left;color:var(--danger);">🚪 Logout</button>
+        </form>
+    </aside>
+
+    <main class="admin-content">
+        <div style="max-width:700px;">
+            <a th:href="@{/admin/events}" class="btn btn-secondary btn-sm" style="margin-bottom:1.5rem;">&larr; Back to Events</a>
+
+            <div class="section-title">
+                <span th:text="${isEdit} ? 'Edit Event' : 'Add New Event'">Form</span>
+            </div>
+
+            <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:20px;padding:2rem;">
+                <form th:action="${isEdit} ? '/admin/events/' + event.id + '/edit' : '/admin/events/new'"
+                      th:object="${event}" method="post">
+
+                    <div class="form-row">
+                        <div class="form-group" style="grid-column:1/-1;">
+                            <label class="form-label">Event Title *</label>
+                            <input type="text" th:field="*{title}" class="form-control" placeholder="e.g. AI & Machine Learning Summit"/>
+                            <div class="form-error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Event Type *</label>
+                            <select th:field="*{type}" class="form-control">
+                                <option value="">Select Type</option>
+                                <option value="Workshop">Workshop</option>
+                                <option value="Seminar">Seminar</option>
+                                <option value="Conference">Conference</option>
+                                <option value="Cultural">Cultural</option>
+                                <option value="Sports">Sports</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <div class="form-error" th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Department *</label>
+                            <select th:field="*{department}" class="form-control">
+                                <option value="">Select Department</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                <option value="Civil Engineering">Civil Engineering</option>
+                                <option value="Management">Management</option>
+                                <option value="All Departments">All Departments</option>
+                            </select>
+                            <div class="form-error" th:if="${#fields.hasErrors('department')}" th:errors="*{department}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Date &amp; Time *</label>
+                            <input type="datetime-local" th:field="*{date}" class="form-control"/>
+                            <div class="form-error" th:if="${#fields.hasErrors('date')}" th:errors="*{date}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select th:field="*{status}" class="form-control">
+                                <option value="UPCOMING">UPCOMING</option>
+                                <option value="ONGOING">ONGOING</option>
+                                <option value="COMPLETED">COMPLETED</option>
+                                <option value="CANCELLED">CANCELLED</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="grid-column:1/-1;">
+                            <label class="form-label">Venue *</label>
+                            <input type="text" th:field="*{venue}" class="form-control" placeholder="e.g. Main Auditorium, Block A"/>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Capacity</label>
+                            <input type="number" th:field="*{capacity}" class="form-control" min="1" placeholder="100"/>
+                        </div>
+
+                        <div class="form-group" style="grid-column:1/-1;">
+                            <label class="form-label">Description</label>
+                            <textarea th:field="*{description}" class="form-control" rows="5" placeholder="Describe the event, topics covered, prerequisites..."></textarea>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;gap:1rem;margin-top:0.5rem;">
+                        <button type="submit" class="btn btn-primary">
+                            <span th:text="${isEdit} ? '💾 Update Event' : '✅ Create Event'">Save</span>
+                        </button>
+                        <a th:href="@{/admin/events}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

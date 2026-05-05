@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>My Registered Events - Campus Events</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<nav class="navbar">
+    <a th:href="@{/}" class="navbar-brand">🎓 CampusEvents</a>
+    <ul class="nav-links">
+        <li><a th:href="@{/}">Home</a></li>
+        <li><a th:href="@{/events}">All Events</a></li>
+        <li><a th:href="@{/my-events}" class="active">My Events</a></li>
+        <li><a th:href="@{/admin/login}" class="btn-nav">Admin</a></li>
+    </ul>
+</nav>
+
+<div class="container" style="max-width:800px;margin-top:2rem;">
+    <div class="section-title">My <span>Registered Events</span></div>
+
+    <!-- Email Lookup Form -->
+    <div class="form-card" style="margin-bottom:2rem;" id="lookup-form">
+        <div class="form-title">🔎 Find Your Events</div>
+        <div class="form-subtitle">Enter your email to see the events you have registered for.</div>
+        <div class="form-group">
+            <label class="form-label">Your Email Address</label>
+            <input type="email" id="lookup-email" class="form-control" placeholder="your.email@college.edu"/>
+            <div class="form-error" id="lookup-err"></div>
+        </div>
+        <button class="btn btn-primary btn-full" onclick="lookupEvents()">
+            <span id="lookup-text">🔍 Find My Events</span>
+            <div class="spinner" id="lookup-spinner"></div>
+        </button>
+    </div>
+
+    <!-- Events List -->
+    <div id="events-result" style="display:none;">
+        <div id="my-events-list"></div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div id="feedback-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:2000;display:none;align-items:center;justify-content:center;">
+        <div class="form-card" style="position:relative;width:90%;max-width:480px;">
+            <button onclick="closeFeedback()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text-muted);font-size:1.2rem;cursor:pointer;">✕</button>
+            <div class="form-title">📝 Submit Feedback</div>
+            <input type="hidden" id="fb-event-id"/>
+            <input type="hidden" id="fb-student-id"/>
+            <div class="form-group">
+                <label class="form-label">Rating *</label>
+                <div class="rating-input">
+                    <input type="radio" name="rating" id="r5" value="5"/><label for="r5">★</label>
+                    <input type="radio" name="rating" id="r4" value="4"/><label for="r4">★</label>
+                    <input type="radio" name="rating" id="r3" value="3"/><label for="r3">★</label>
+                    <input type="radio" name="rating" id="r2" value="2"/><label for="r2">★</label>
+                    <input type="radio" name="rating" id="r1" value="1"/><label for="r1">★</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Comments *</label>
+                <textarea id="fb-comments" class="form-control" rows="4" placeholder="Share your experience..."></textarea>
+                <div class="form-error" id="fb-err"></div>
+            </div>
+            <button class="btn btn-primary btn-full" onclick="submitFeedback()">Submit Feedback</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast-container"></div>
+<footer class="footer"><p>© 2025 Smart Campus Event Management System</p></footer>
+<script th:src="@{/js/my-events.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

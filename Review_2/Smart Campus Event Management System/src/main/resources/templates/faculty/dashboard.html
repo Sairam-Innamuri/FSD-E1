@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{_fragments :: head('Faculty dashboard')}"></head>
+<body>
+<div class="page-bg" aria-hidden="true"></div>
+<header th:replace="~{_fragments :: navbar('faculty')}"></header>
+
+<main class="container section">
+  <div th:if="${successMessage}" class="flash" th:text="${successMessage}">ok</div>
+
+  <div class="section-head">
+    <h2>Faculty dashboard</h2>
+    <div class="row-actions" style="margin:0;">
+      <a class="btn" th:href="@{/faculty/events}">Manage events</a>
+      <a class="btn btn-primary" th:href="@{/faculty/reports/registrations.xlsx}">Download Excel</a>
+      <a class="btn btn-primary" th:href="@{/faculty/reports/registrations.pdf}">Download PDF</a>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat">
+      <div class="muted">Active events</div>
+      <div class="big" th:text="${totalActiveEvents}">0</div>
+    </div>
+    <div class="stat">
+      <div class="muted">Total registrations</div>
+      <div class="big" th:text="${totalRegistrations}">0</div>
+    </div>
+    <div class="stat">
+      <div class="muted">Exports</div>
+      <div class="big" style="font-size:16px; line-height:1.3;">XLSX + PDF</div>
+    </div>
+  </div>
+
+  <div class="grid" style="grid-template-columns: repeat(12,1fr); gap:12px; margin-top:14px;">
+    <div class="panel" style="grid-column: span 6;">
+      <h3 style="margin:0 0 10px; font-family: Syne, system-ui;">Registrations by department</h3>
+      <div class="stack" th:if="${!#maps.isEmpty(byDepartment)}">
+        <div th:each="e : ${byDepartment}">
+          <div style="display:flex; justify-content:space-between; gap:10px;">
+            <div class="muted" th:text="${e.key}">Dept</div>
+            <div style="font-weight:800;" th:text="${e.value}">0</div>
+          </div>
+          <div class="bar" th:style="|--w:${(maxDept > 0) ? (100.0 * e.value / maxDept) : 0}%|"><i></i></div>
+        </div>
+      </div>
+      <p class="muted" th:if="${#maps.isEmpty(byDepartment)}">No registration data yet.</p>
+    </div>
+    <div class="panel" style="grid-column: span 6;">
+      <h3 style="margin:0 0 10px; font-family: Syne, system-ui;">Registrations by event type</h3>
+      <div class="stack" th:if="${!#maps.isEmpty(byType)}">
+        <div th:each="e : ${byType}">
+          <div style="display:flex; justify-content:space-between; gap:10px;">
+            <div class="muted" th:text="${e.key}">TYPE</div>
+            <div style="font-weight:800;" th:text="${e.value}">0</div>
+          </div>
+          <div class="bar" th:style="|--w:${(maxType > 0) ? (100.0 * e.value / maxType) : 0}%|"><i></i></div>
+        </div>
+      </div>
+      <p class="muted" th:if="${#maps.isEmpty(byType)}">No registration data yet.</p>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:14px;">
+    <h3 style="margin:0 0 10px; font-family: Syne, system-ui;">Registrations per event (active)</h3>
+    <table class="table" th:if="${!#lists.isEmpty(perEvent)}">
+      <thead>
+      <tr>
+        <th>Event</th>
+        <th>Registrations</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="row : ${perEvent}">
+        <td th:text="${row[0]}">title</td>
+        <td th:text="${row[1]}">n</td>
+      </tr>
+      </tbody>
+    </table>
+    <p class="muted" th:if="${#lists.isEmpty(perEvent)}">No events yet.</p>
+  </div>
+
+  <p class="muted small" style="margin-top:14px;">Veltech faculty portal — authorised IDs only.</p>
+</main>
+
+<div th:replace="~{_fragments :: fab}"></div>
+<footer th:replace="~{_fragments :: footer}"></footer>
+</body>
+</html>

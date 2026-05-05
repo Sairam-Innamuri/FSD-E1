@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{_fragments :: head('Admin · Registrations')}"></head>
+<body>
+<div class="page-bg" aria-hidden="true"></div>
+<header th:replace="~{_fragments :: navbar('faculty')}"></header>
+
+<main class="container section">
+  <div class="section-head">
+    <h2 th:text="'Registrations · ' + ${event.title}">Registrations</h2>
+    <a class="btn btn-ghost" th:href="@{/faculty/events}">Back to events</a>
+  </div>
+
+  <div class="panel">
+    <div class="meta">
+      <span class="tag accent" th:text="${event.eventType}">TYPE</span>
+      <span class="tag" th:text="${event.department}">dept</span>
+      <span class="pill" th:text="${#lists.size(registrations)} + ' students'">0</span>
+    </div>
+
+    <table class="table" style="margin-top:14px;" th:if="${!#lists.isEmpty(registrations)}">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>University ID</th>
+        <th>Roll</th>
+        <th>Feedback</th>
+        <th>Registered at</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="r : ${registrations}">
+        <td th:text="${r.studentName}">n</td>
+        <td class="mono" th:text="${r.studentEmail}">e</td>
+        <td class="mono" th:text="${r.studentRoll}">roll</td>
+        <td>
+          <span class="muted small" th:if="${r.feedback == null}">—</span>
+          <div th:if="${r.feedback != null}">
+            <span class="pill" th:text="'★ ' + ${r.feedback.rating} + ' / 5'">rating</span>
+            <div class="muted small" style="margin-top:6px; white-space: pre-wrap;" th:text="${r.feedback.comment}">comment</div>
+          </div>
+        </td>
+        <td class="muted" th:text="${#temporals.format(r.registeredAt, 'dd MMM yyyy HH:mm')}">t</td>
+      </tr>
+      </tbody>
+    </table>
+    <p class="muted" th:if="${#lists.isEmpty(registrations)}">No registrations yet.</p>
+  </div>
+</main>
+
+<div th:replace="~{_fragments :: fab}"></div>
+<footer th:replace="~{_fragments :: footer}"></footer>
+</body>
+</html>

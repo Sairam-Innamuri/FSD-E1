@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Admin Dashboard - Campus Events</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="admin-sidebar-brand">🎓 Admin Panel</div>
+        <a th:href="@{/admin/dashboard}" class="admin-nav-item active">📊 Dashboard</a>
+        <a th:href="@{/admin/events}" class="admin-nav-item">📋 Events</a>
+        <a th:href="@{/admin/events/new}" class="admin-nav-item">➕ Add Event</a>
+        <a th:href="@{/admin/stats}" class="admin-nav-item">📈 Statistics</a>
+        <a th:href="@{/h2-console}" class="admin-nav-item" target="_blank">🗄 H2 Console</a>
+        <div style="flex:1"></div>
+        <a th:href="@{/}" class="admin-nav-item">🏠 Public Site</a>
+        <form th:action="@{/admin/logout}" method="post">
+            <button type="submit" class="admin-nav-item" style="border:none;cursor:pointer;background:none;width:100%;text-align:left;color:var(--danger);">🚪 Logout</button>
+        </form>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-content">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;">
+            <div>
+                <h1 style="font-size:1.6rem;font-weight:800;">Dashboard</h1>
+                <p style="color:var(--text-muted);">Welcome back, Admin</p>
+            </div>
+            <a th:href="@{/admin/events/new}" class="btn btn-primary">➕ New Event</a>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-card-icon">📅</div>
+                <div class="stat-card-value" th:text="${stats.totalEvents}">0</div>
+                <div class="stat-card-label">Total Events</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-icon">🚀</div>
+                <div class="stat-card-value" th:text="${stats.upcomingEvents}">0</div>
+                <div class="stat-card-label">Upcoming Events</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-icon">👥</div>
+                <div class="stat-card-value" th:text="${stats.totalRegistrations}">0</div>
+                <div class="stat-card-label">Registrations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-icon">💬</div>
+                <div class="stat-card-value" th:text="${stats.totalFeedbacks}">0</div>
+                <div class="stat-card-label">Feedback</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-icon">⭐</div>
+                <div class="stat-card-value" th:text="${#numbers.formatDecimal(stats.averageRating,1,1)}">0.0</div>
+                <div class="stat-card-label">Avg Rating</div>
+            </div>
+        </div>
+
+        <!-- Recent Events Table -->
+        <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:16px;overflow:hidden;">
+            <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                <h3 style="font-weight:700;">Upcoming Events</h3>
+                <a th:href="@{/admin/events}" style="color:var(--primary);font-size:.85rem;text-decoration:none;">View All →</a>
+            </div>
+            <div style="overflow-x:auto;">
+                <table class="admin-table">
+                    <thead><tr>
+                        <th>Event</th><th>Type</th><th>Date</th><th>Department</th><th>Capacity</th><th>Actions</th>
+                    </tr></thead>
+                    <tbody>
+                    <tr th:each="event : ${recentEvents}">
+                        <td>
+                            <div style="font-weight:600;" th:text="${event.title}">Title</div>
+                            <div style="font-size:.75rem;color:var(--text-muted);" th:text="${event.venue}">Venue</div>
+                        </td>
+                        <td><span class="event-type-badge"
+                                  th:classappend="${event.type == 'Workshop'} ? 'badge-workshop' :
+                                                  (${event.type == 'Seminar'} ? 'badge-seminar' :
+                                                  (${event.type == 'Conference'} ? 'badge-conference' : 'badge-default'))"
+                                  th:text="${event.type}">Type</span></td>
+                        <td style="font-size:.82rem;" th:text="${#temporals.format(event.date, 'dd MMM yyyy')}">Date</td>
+                        <td style="font-size:.82rem;" th:text="${event.department}">Dept</td>
+                        <td>
+                            <div style="font-size:.82rem;" th:text="${event.registrationCount} + ' / ' + ${event.capacity}">0/100</div>
+                            <div class="capacity-bar" style="margin-top:.3rem;width:80px;">
+                                <div class="capacity-fill"
+                                     th:style="'width:' + ${event.capacity > 0 ? (event.registrationCount * 100 / event.capacity) : 0} + '%'"></div>
+                            </div>
+                        </td>
+                        <td>
+                            <a th:href="@{/admin/events/{id}/edit(id=${event.id})}" class="btn btn-secondary btn-sm">Edit</a>
+                            <a th:href="@{/admin/events/{id}/registrations(id=${event.id})}" class="btn btn-secondary btn-sm">Regs</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="empty-state" th:if="${#lists.isEmpty(recentEvents)}" style="padding:2rem;">
+                    <div class="empty-icon">📅</div>
+                    <div class="empty-title">No upcoming events</div>
+                    <a th:href="@{/admin/events/new}" class="btn btn-primary" style="margin-top:1rem;">Add Event</a>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

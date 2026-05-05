@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{_fragments :: head('Upcoming events')}"></head>
+<body>
+<div class="page-bg" aria-hidden="true"></div>
+<header th:replace="~{_fragments :: navbar('events')}"></header>
+
+<main class="container section">
+  <div class="section-head">
+    <div>
+      <h1 class="page-title">Upcoming events</h1>
+      <p class="lead muted">Filter by department, event type, and start date. Sign in as a student to register.</p>
+    </div>
+  </div>
+
+  <form class="filters" method="get" th:action="@{/events}">
+    <div>
+      <label for="department">Department</label>
+      <select id="department" name="department">
+        <option value="" th:selected="${filterDepartment == null || filterDepartment == ''}">All departments</option>
+        <option th:each="d : ${departments}" th:value="${d}" th:text="${d}" th:selected="${filterDepartment} == ${d}"></option>
+      </select>
+    </div>
+    <div>
+      <label for="type">Event type</label>
+      <select id="type" name="type">
+        <option value="" th:selected="${filterType == null}">All types</option>
+        <option th:each="t : ${types}" th:value="${t}" th:text="${t}" th:selected="${filterType} == ${t}"></option>
+      </select>
+    </div>
+    <div>
+      <label for="from">From date/time</label>
+      <input id="from" type="datetime-local" name="from"
+             th:value="${filterFrom != null} ? ${#temporals.format(filterFrom, 'yyyy-MM-dd''T''HH:mm')} : ''"/>
+    </div>
+    <div class="row-actions" style="margin:0;">
+      <button class="btn btn-primary" type="submit">Apply</button>
+      <a class="btn btn-ghost" th:href="@{/events}">Reset</a>
+    </div>
+  </form>
+
+  <div class="grid cards" style="margin-top:16px;">
+    <article class="card" th:each="e : ${events}" th:with="c=${counts[e.id]}">
+      <div class="row-actions" style="margin:0; justify-content:space-between;">
+        <span class="tag accent" th:text="${e.eventType}">TYPE</span>
+        <span class="tag ok" th:inline="text">[[${c}]] / [[${e.capacity}]]</span>
+      </div>
+      <h3 th:text="${e.title}">Title</h3>
+      <div class="muted" th:text="${#temporals.format(e.startDateTime, 'EEE, dd MMM yyyy · HH:mm')}">date</div>
+      <div class="meta">
+        <span class="tag" th:text="${e.department}">Dept</span>
+        <span class="tag" th:text="${e.venue}">Venue</span>
+      </div>
+      <div class="row-actions">
+        <a class="btn btn-primary" th:href="@{/events/{id}(id=${e.id})}">Details</a>
+        <a class="btn" th:if="${e.active} and ${e.startDateTime.isAfter(now)}"
+           th:href="@{/student/events/{id}/register(id=${e.id})}">Register</a>
+      </div>
+    </article>
+  </div>
+
+  <p class="muted" th:if="${#lists.isEmpty(events)}" style="margin-top:14px;">No events match these filters.</p>
+</main>
+
+<div th:replace="~{_fragments :: fab}"></div>
+<footer th:replace="~{_fragments :: footer}"></footer>
+</body>
+</html>

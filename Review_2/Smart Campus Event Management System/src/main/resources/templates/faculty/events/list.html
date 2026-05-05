@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{_fragments :: head('Admin · Events')}"></head>
+<body>
+<div class="page-bg" aria-hidden="true"></div>
+<header th:replace="~{_fragments :: navbar('faculty')}"></header>
+
+<main class="container section">
+  <div th:if="${successMessage}" class="flash" th:text="${successMessage}">ok</div>
+
+  <div class="section-head">
+    <h2>All events</h2>
+    <div class="row-actions" style="margin:0;">
+      <a class="btn btn-ghost" th:href="@{/faculty}">Dashboard</a>
+      <a class="btn btn-primary" th:href="@{/faculty/events/new}">New event</a>
+    </div>
+  </div>
+
+  <div class="panel">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Title</th>
+        <th>Type</th>
+        <th>Department</th>
+        <th>Starts</th>
+        <th>Active</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="e : ${events}">
+        <td style="font-weight:800;" th:text="${e.title}">t</td>
+        <td class="muted" th:text="${e.eventType}">type</td>
+        <td class="muted" th:text="${e.department}">dept</td>
+        <td class="muted" th:text="${#temporals.format(e.startDateTime, 'dd MMM yyyy HH:mm')}">when</td>
+        <td><span class="pill" th:text="${e.active} ? 'Yes' : 'No'">Yes</span></td>
+        <td>
+          <div class="row-actions" style="margin:0;">
+            <a class="btn" style="padding:8px 12px; font-size:13px;" th:href="@{/faculty/events/{id}/registrations(id=${e.id})}">Registrations</a>
+            <a class="btn" style="padding:8px 12px; font-size:13px;" th:href="@{/faculty/events/{id}/edit(id=${e.id})}">Edit</a>
+            <form method="post" th:action="@{/faculty/events/{id}/delete(id=${e.id})}" style="display:inline;">
+              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+              <button class="btn btn-danger" style="padding:8px 12px; font-size:13px;" type="submit" onclick="return confirm('Delete this event and all registrations?');">Delete</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<div th:replace="~{_fragments :: fab}"></div>
+<footer th:replace="~{_fragments :: footer}"></footer>
+</body>
+</html>

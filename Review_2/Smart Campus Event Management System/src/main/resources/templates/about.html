@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{_fragments :: head('About · Veltech')}"></head>
+<body>
+<div class="page-bg" aria-hidden="true"></div>
+<header th:replace="~{_fragments :: navbar('about')}"></header>
+
+<main class="container section prose">
+  <h1 class="page-title">About this portal</h1>
+  <p class="lead"><strong>Veltech University</strong> — Smart campus event management for students and faculty.</p>
+
+  <div class="panel">
+    <h2>Students</h2>
+    <p>Each student signs in with a university ID in the format <span class="mono">VTU</span> followed by five digits. New students can register from the student registration page.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Faculty</h2>
+    <p>Faculty use dedicated credentials. Only the four authorised faculty login IDs configured for this deployment may access the faculty area.</p>
+  </div>
+
+  <p>
+    <a class="btn btn-primary" th:href="@{/}">Home</a>
+    <a class="btn btn-ghost" th:href="@{/login/student}">Student login</a>
+    <a class="btn btn-ghost" th:href="@{/login/faculty}">Faculty login</a>
+  </p>
+</main>
+
+<div th:replace="~{_fragments :: fab}"></div>
+<footer th:replace="~{_fragments :: footer}"></footer>
+</body>
+</html>

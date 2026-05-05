@@ -1,0 +1,8 @@
+com\campus\event\dto\OtpRequest.class
+com\campus\event\repository\EventRepository.class
+com\campus\event\entity\Event.class
+com\campus\event\repository\FeedbackRepository.class
+com\campus\event\entity\Registration.class
+com\campus\event\dto\FeedbackRequest.class
+com\campus\event\entity\Student.class
+com\campus\event\entity\Feedback.class

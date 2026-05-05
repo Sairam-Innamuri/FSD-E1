@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{_fragments :: head('My registrations')}"></head>
+<body>
+<div class="page-bg" aria-hidden="true"></div>
+<header th:replace="~{_fragments :: navbar('regs')}"></header>
+
+<main class="container section">
+  <div th:if="${successMessage}" class="flash" th:text="${successMessage}">Saved</div>
+
+  <div class="section-head">
+    <div>
+      <h1 class="page-title">My registrations</h1>
+      <p class="lead muted">University ID: <span class="mono" th:text="${email}">VTU</span></p>
+    </div>
+    <a class="btn btn-ghost" th:href="@{/student/home}">Student home</a>
+  </div>
+
+  <div class="panel">
+    <table class="table" th:if="${!#lists.isEmpty(registrations)}">
+      <thead>
+      <tr>
+        <th>Event</th>
+        <th>When</th>
+        <th>Roll no.</th>
+        <th>Feedback</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="r : ${registrations}">
+        <td>
+          <div class="cell-title" th:text="${r.event.title}">Event</div>
+          <div class="muted small" th:text="${r.event.department}">dept</div>
+        </td>
+        <td class="muted" th:text="${#temporals.format(r.event.startDateTime, 'dd MMM yyyy · HH:mm')}">when</td>
+        <td class="mono" th:text="${r.studentRoll}">roll</td>
+        <td>
+          <span class="pill" th:if="${r.feedback != null}">Submitted</span>
+          <a class="btn btn-sm btn-primary"
+             th:if="${r.feedback == null} and ${!r.event.startDateTime.isAfter(now)}"
+             th:href="@{/student/feedback/{id}(id=${r.id})}">Give feedback</a>
+          <span class="muted small"
+                th:if="${r.feedback == null} and ${r.event.startDateTime.isAfter(now)}">After event starts</span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <p class="muted" th:if="${#lists.isEmpty(registrations)}">You have not registered for any events yet. <a th:href="@{/events}">Browse events</a>.</p>
+  </div>
+</main>
+
+<div th:replace="~{_fragments :: fab}"></div>
+<footer th:replace="~{_fragments :: footer}"></footer>
+</body>
+</html>

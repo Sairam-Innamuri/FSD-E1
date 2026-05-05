@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{_fragments :: head('Register for an event')}"></head>
+<body>
+<div class="page-bg" aria-hidden="true"></div>
+<header th:replace="~{_fragments :: navbar('events')}"></header>
+
+<main class="container section">
+  <div class="section-head">
+    <div>
+      <h1 class="page-title">Event registration</h1>
+      <p class="lead muted">Your university ID is taken from your signed-in account.</p>
+    </div>
+    <a class="btn btn-ghost" th:href="@{/events/{id}(id=${event.id})}">Back to event</a>
+  </div>
+
+  <div class="panel panel-highlight">
+    <div class="pill" th:text="${event.eventType}">TYPE</div>
+    <h2 class="card-title" th:text="${event.title}">Title</h2>
+    <p class="muted" th:text="${#temporals.format(event.startDateTime, 'EEE, dd MMM yyyy · HH:mm')} + ' · ' + ${event.venue}">meta</p>
+    <p class="muted small">Signed in as: <span class="mono" th:text="${studentEmail}">VTU</span></p>
+  </div>
+
+  <form class="panel stack-form" style="margin-top:16px;" method="post"
+        th:action="@{/student/events/{id}/register(id=${event.id})}" th:object="${form}">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    <div class="form-two">
+      <div>
+        <label for="studentName">Full name</label>
+        <input id="studentName" th:field="*{studentName}" autocomplete="name"/>
+        <p class="field-error" th:if="${#fields.hasErrors('studentName')}" th:errors="*{studentName}"></p>
+      </div>
+      <div>
+        <label for="studentRoll">Roll number</label>
+        <input id="studentRoll" th:field="*{studentRoll}" autocomplete="off"/>
+        <p class="field-error" th:if="${#fields.hasErrors('studentRoll')}" th:errors="*{studentRoll}"></p>
+      </div>
+    </div>
+    <div class="row-actions">
+      <button class="btn btn-primary" type="submit">Confirm registration</button>
+      <a class="btn btn-ghost" th:href="@{/events}">Cancel</a>
+    </div>
+  </form>
+</main>
+
+<div th:replace="~{_fragments :: fab}"></div>
+<footer th:replace="~{_fragments :: footer}"></footer>
+</body>
+</html>

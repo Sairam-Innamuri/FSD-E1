@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{_fragments :: head('Veltech Campus Events')}"></head>
+<body>
+<div class="page-bg" aria-hidden="true"></div>
+<header th:replace="~{_fragments :: navbar('home')}"></header>
+
+<main class="container">
+  <section class="hero hero-balanced">
+    <div class="hero-main">
+      <p class="eyebrow">Veltech University</p>
+      <h1 class="hero-title">Campus events, workshops, and seminars in one place.</h1>
+      <p class="lead">Students use their <strong>VTU</strong> university ID to register and manage event sign-ups. Faculty manage schedules, registrations, and reports on a separate secure portal.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" th:href="@{/events}">Browse events</a>
+        <a class="btn btn-secondary" th:href="@{/login/student}">Student login</a>
+        <a class="btn btn-secondary" th:href="@{/login/faculty}">Faculty login</a>
+        <a class="btn btn-ghost" th:href="@{/register/student}">Student register</a>
+      </div>
+    </div>
+    <aside class="hero-aside">
+      <div class="stat-block">
+        <h3>For students</h3>
+        <ul class="checklist">
+          <li>Register with your VTU ID (VTU + 5 digits)</li>
+          <li>Join events and submit feedback</li>
+        </ul>
+        <h3 style="margin-top:16px;">For faculty</h3>
+        <ul class="checklist">
+          <li>Only authorised faculty IDs (VTUF001–VTUF004)</li>
+          <li>Event management and exports</li>
+        </ul>
+      </div>
+    </aside>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2 class="section-title">Quick links</h2>
+    </div>
+    <div class="tile-grid">
+      <a class="tile" th:href="@{/login/student}">
+        <h3>Student login</h3>
+        <p class="muted">Use your VTU university ID and password.</p>
+        <span class="tile-cta">Open</span>
+      </a>
+      <a class="tile" th:href="@{/register/student}">
+        <h3>Student registration</h3>
+        <p class="muted">Create an account if you are new to the portal.</p>
+        <span class="tile-cta">Register</span>
+      </a>
+      <a class="tile" th:href="@{/login/faculty}">
+        <h3>Faculty login</h3>
+        <p class="muted">Authorised Veltech faculty only.</p>
+        <span class="tile-cta">Open</span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<div th:replace="~{_fragments :: fab}"></div>
+<footer th:replace="~{_fragments :: footer}"></footer>
+</body>
+</html>

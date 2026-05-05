@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Registrations - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div class="admin-sidebar-brand">🎓 Admin Panel</div>
+        <a th:href="@{/admin/dashboard}" class="admin-nav-item">📊 Dashboard</a>
+        <a th:href="@{/admin/events}" class="admin-nav-item active">📋 Events</a>
+        <a th:href="@{/admin/events/new}" class="admin-nav-item">➕ Add Event</a>
+        <a th:href="@{/admin/stats}" class="admin-nav-item">📈 Statistics</a>
+        <div style="flex:1"></div>
+        <a th:href="@{/}" class="admin-nav-item">🏠 Public Site</a>
+        <form th:action="@{/admin/logout}" method="post">
+            <button type="submit" class="admin-nav-item" style="border:none;cursor:pointer;background:none;width:100%;text-align:left;color:var(--danger);">🚪 Logout</button>
+        </form>
+    </aside>
+    <main class="admin-content">
+        <a th:href="@{/admin/events}" class="btn btn-secondary btn-sm" style="margin-bottom:1.5rem;">&larr; Back</a>
+        <div class="section-title">Registrations for <span th:text="${event.title}">Event</span></div>
+        <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:16px;overflow:hidden;">
+            <div style="overflow-x:auto;">
+                <table class="admin-table">
+                    <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Department</th><th>OTP Verified</th><th>Registered At</th><th>Status</th></tr></thead>
+                    <tbody>
+                    <tr th:each="reg,idx : ${registrations}">
+                        <td style="color:var(--text-muted);" th:text="${idx.count}">1</td>
+                        <td th:text="${reg.student.name}">Name</td>
+                        <td style="font-size:.82rem;" th:text="${reg.student.email}">Email</td>
+                        <td style="font-size:.82rem;" th:text="${reg.student.department}">Dept</td>
+                        <td>
+                            <span th:if="${reg.otpVerified}" class="alert alert-success" style="padding:.2rem .6rem;font-size:.75rem;display:inline-block;">✅ Yes</span>
+                            <span th:unless="${reg.otpVerified}" class="alert alert-danger" style="padding:.2rem .6rem;font-size:.75rem;display:inline-block;">❌ No</span>
+                        </td>
+                        <td style="font-size:.8rem;" th:text="${#temporals.format(reg.registeredAt, 'dd MMM yyyy HH:mm')}">Date</td>
+                        <td><span th:text="${reg.status}" style="font-size:.78rem;color:var(--accent);">CONFIRMED</span></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="empty-state" th:if="${#lists.isEmpty(registrations)}" style="padding:3rem;">
+                    <div class="empty-icon">👥</div>
+                    <div class="empty-title">No registrations yet</div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

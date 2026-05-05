@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head (title)">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title th:text="${title}">Veltech Campus Events</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Outfit:wght@500..700&display=swap" rel="stylesheet"/>
+  <link th:href="@{/css/app.css}" rel="stylesheet"/>
+</head>
+<body>
+<header class="topbar" th:fragment="navbar (active)">
+  <div class="container topbar-inner">
+    <a class="brand" th:href="@{/}">
+      <div class="brand-mark" aria-hidden="true"></div>
+      <div class="brand-text">
+        <div class="brand-title">Veltech CampusEvents</div>
+        <div class="brand-sub">Veltech University</div>
+      </div>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a class="nav-link" th:classappend="${active}=='home' ? ' active'" th:href="@{/}">Home</a>
+      <a class="nav-link" th:classappend="${active}=='events' ? ' active'" th:href="@{/events}">Events</a>
+      <a class="nav-link" th:classappend="${active}=='about' ? ' active'" th:href="@{/about}">About</a>
+
+      <th:block th:if="${authStudent}">
+        <a class="nav-link" th:classappend="${active}=='student' ? ' active'" th:href="@{/student/home}">Student</a>
+        <a class="nav-link" th:classappend="${active}=='regs' ? ' active'" th:href="@{/student/registrations}">My registrations</a>
+      </th:block>
+
+      <th:block th:if="${authFaculty}">
+        <a class="nav-link" th:classappend="${active}=='faculty' ? ' active'" th:href="@{/faculty/dashboard}">Faculty</a>
+      </th:block>
+
+      <th:block th:if="${!authAuthenticated}">
+        <a class="nav-link" th:classappend="${active}=='login-stu' ? ' active'" th:href="@{/login/student}">Student login</a>
+        <a class="nav-link" th:classappend="${active}=='login-fac' ? ' active'" th:href="@{/login/faculty}">Faculty login</a>
+        <a class="nav-link btn-nav" th:href="@{/register/student}">Student register</a>
+      </th:block>
+
+      <th:block th:if="${authAuthenticated}">
+        <form class="nav-logout" method="post" th:action="@{/logout}">
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+          <button type="submit" class="nav-link nav-logout-btn">Sign out</button>
+        </form>
+      </th:block>
+    </nav>
+  </div>
+</header>
+
+<div th:fragment="fab">
+  <div class="fab-wrap" aria-label="Quick actions">
+    <a class="fab-main" th:href="@{/events}" title="Browse events">
+      <span class="fab-icon" aria-hidden="true"></span>
+      <span>Events</span>
+    </a>
+    <a class="fab-secondary" th:href="@{/login/student}" title="Student login" th:if="${!authAuthenticated}">Student</a>
+    <a class="fab-secondary" th:href="@{/login/faculty}" title="Faculty login" th:if="${!authAuthenticated}">Faculty</a>
+    <a class="fab-secondary" th:href="@{/student/home}" title="Student home" th:if="${authStudent}">Home</a>
+    <a class="fab-secondary" th:href="@{/faculty/dashboard}" title="Faculty" th:if="${authFaculty}">Faculty</a>
+  </div>
+</div>
+
+<footer class="footer" th:fragment="footer">
+  <div class="container footer-inner">
+    <div class="footer-line" th:text="${@environment.getProperty('app.college.name')} + ' · Campus event portal'">Veltech University</div>
+  </div>
+</footer>
+</body>
+</html>
